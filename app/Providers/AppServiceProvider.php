@@ -12,6 +12,8 @@ use App\Policies\PessoaPolicy;
 use App\Policies\AtendimentoPolicy;
 use App\Policies\ComentarioPolicy;
 use App\Policies\CurtidaPolicy;
+use App\Observers\AtendimentoObserver;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,5 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Atendimento::class, AtendimentoPolicy::class);
         Gate::policy(Comentario::class, ComentarioPolicy::class);
         Gate::policy(Curtida::class, CurtidaPolicy::class);
+        
+         Atendimento::observe(AtendimentoObserver::class);
     }
 }
