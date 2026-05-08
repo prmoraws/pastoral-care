@@ -9,7 +9,7 @@ class AtendimentoObserver
     public function creating(Atendimento $atendimento): void
     {
         // Define a ordem automaticamente
-        $atendimento->ordem = Atendimento::where('pessoa_id', $atendimento->pessoa_id)->count() + 1;
+       $atendimento->ordem = Atendimento::where('user_id', $atendimento->user_id)->count() + 1;
 
         // Garante que user_id seja o usuário autenticado
         if (empty($atendimento->user_id)) {

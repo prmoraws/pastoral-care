@@ -2,7 +2,8 @@
 
 namespace App\Livewire;
 
-use App\Models\Pessoa;
+use App\Models\Atendimento;
+use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -26,25 +27,18 @@ class Feed extends Component
     {
         $user = Auth::user();
 
-        $pessoas = Pessoa::query()
-            ->with(['voluntario', 'atendimentos' => fn($q) => $q->latest('data_atendimento')])
+        $atendimentos = Atendimento::query()
+            ->with(['voluntario', 'curtidas', 'comentarios.user'])
             ->when($user->hasRole('author'), fn($q) => $q->where('user_id', $user->id))
-            ->when($this->busca, fn($q) => $q->where('nome', 'like', "%{$this->busca}%"))
+            ->when($this->busca, fn($q) => $q->where('nome_assistido', 'like', "%{$this->busca}%"))
             ->when($this->filtroVoluntario, fn($q) => $q->where('user_id', $this->filtroVoluntario))
-            ->when($this->filtroData, fn($q) => $q->whereHas('atendimentos', fn($a) =>
-                $a->whereDate('data_atendimento', $this->filtroData)
-            ))
-            ->orderByDesc(
-                \App\Models\Atendimento::select('created_at')
-                    ->whereColumn('pessoa_id', 'pessoas.id')
-                    ->latest()
-                    ->limit(1)
-            )
+            ->when($this->filtroData, fn($q) => $q->whereDate('data_atendimento', $this->filtroData))
+            ->latest()
             ->paginate(10);
 
-        $voluntarios = \App\Models\User::role('author')->where('ativo', true)->pluck('name', 'id');
+        $voluntarios = User::role('author')->where('ativo', true)->pluck('name', 'id');
 
-        return view('livewire.feed', compact('pessoas', 'voluntarios'))
+        return view('livewire.feed', compact('atendimentos', 'voluntarios'))
             ->layout('layouts.app');
     }
 }

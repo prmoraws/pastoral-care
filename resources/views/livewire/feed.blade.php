@@ -3,7 +3,7 @@
         <input
             wire:model.live.debounce.300ms="busca"
             type="text"
-            placeholder="Buscar pessoa..."
+            placeholder="Buscar assistido..."
             class="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
         />
 
@@ -25,15 +25,15 @@
         @endif
     </div>
 
-    @forelse($pessoas as $pessoa)
-        @livewire('card-pessoa', ['pessoa' => $pessoa], key($pessoa->id))
+    @forelse($atendimentos as $atendimento)
+        @livewire('card-atendimento', ['atendimento' => $atendimento], key($atendimento->id))
     @empty
         <div class="text-center text-gray-400 py-16">
-            <p class="text-lg">Nenhuma pessoa encontrada.</p>
+            <p class="text-lg">Nenhum atendimento encontrado.</p>
         </div>
     @endforelse
 
     <div class="mt-6">
-        {{ $pessoas->links() }}
+        {{ $atendimentos->links() }}
     </div>
 </div>

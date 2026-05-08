@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AtendimentoResource\Pages;
 use App\Models\Atendimento;
-use App\Models\Pessoa;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -20,26 +19,51 @@ class AtendimentoResource extends Resource
     protected static ?string $navigationLabel = 'Atendimentos';
     protected static ?string $modelLabel = 'Atendimento';
     protected static ?string $pluralModelLabel = 'Atendimentos';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form->schema([
+            Forms\Components\Section::make('Dados do Assistido')
+                ->schema([
+                    Forms\Components\FileUpload::make('foto')
+                        ->label('Foto do Assistido')
+                        ->image()
+                        ->imageEditor()
+                        ->directory('assistidos')
+                        ->columnSpanFull(),
+
+                    Forms\Components\TextInput::make('nome_assistido')
+                        ->label('Nome do Assistido')
+                        ->required()
+                        ->maxLength(255),
+
+                    Forms\Components\TextInput::make('contato')
+                        ->label('Contato')
+                        ->tel()
+                        ->required()
+                        ->maxLength(20),
+
+                    Forms\Components\TextInput::make('endereco')
+                        ->label('Endereço')
+                        ->required()
+                        ->maxLength(255),
+
+                    Forms\Components\TextInput::make('bairro')
+                        ->label('Bairro')
+                        ->required()
+                        ->maxLength(100),
+
+                    Forms\Components\TextInput::make('cidade')
+                        ->label('Cidade')
+                        ->required()
+                        ->maxLength(100),
+                ])->columns(2),
+
             Forms\Components\Section::make('Dados do Atendimento')
                 ->schema([
-                    Forms\Components\Select::make('pessoa_id')
-                        ->label('Pessoa')
-                        ->options(function () {
-                            $query = Pessoa::query();
-                            if (Auth::user()->hasRole('author')) {
-                                $query->where('user_id', Auth::id());
-                            }
-                            return $query->pluck('nome', 'id');
-                        })
-                        ->required()
-                        ->native(false)
-                        ->searchable()
-                        ->columnSpanFull(),
+                    Forms\Components\Hidden::make('user_id')
+                        ->default(fn() => Auth::id()),
 
                     Forms\Components\DatePicker::make('data_atendimento')
                         ->label('Data do Atendimento')
@@ -48,9 +72,6 @@ class AtendimentoResource extends Resource
                         ->displayFormat('d/m/Y')
                         ->native(false),
 
-                    Forms\Components\Hidden::make('user_id')
-                        ->default(fn() => Auth::id()),
-
                     Forms\Components\Textarea::make('descricao')
                         ->label('Descreva o Atendimento')
                         ->required()
@@ -58,7 +79,7 @@ class AtendimentoResource extends Resource
                         ->columnSpanFull(),
 
                     Forms\Components\FileUpload::make('imagem')
-                        ->label('Imagem')
+                        ->label('Imagem do Atendimento')
                         ->image()
                         ->imageEditor()
                         ->directory('atendimentos')
@@ -71,20 +92,26 @@ class AtendimentoResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('titulo')
-                    ->label('Título')
-                    ->getStateUsing(fn($record) => $record->titulo)
-                    ->searchable(query: fn(Builder $query, string $search) =>
-                        $query->where('descricao', 'like', "%{$search}%")
-                    ),
+                Tables\Columns\ImageColumn::make('foto')
+                    ->label('Foto')
+                    ->circular()
+                    ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->nome_assistido)),
 
-                Tables\Columns\TextColumn::make('pessoa.nome')
-                    ->label('Pessoa')
+                Tables\Columns\TextColumn::make('nome_assistido')
+                    ->label('Assistido')
                     ->searchable()
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('cidade')
+                    ->label('Cidade')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('bairro')
+                    ->label('Bairro')
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('voluntario.name')
-                    ->label('Atendido por')
+                    ->label('Voluntário')
                     ->searchable()
                     ->sortable(),
 
@@ -92,10 +119,6 @@ class AtendimentoResource extends Resource
                     ->label('Data')
                     ->date('d/m/Y')
                     ->sortable(),
-
-                Tables\Columns\ImageColumn::make('imagem')
-                    ->label('Imagem')
-                    ->circular(),
 
                 Tables\Columns\TextColumn::make('curtidas_count')
                     ->label('❤️')
@@ -107,17 +130,17 @@ class AtendimentoResource extends Resource
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('pessoa_id')
-                    ->label('Pessoa')
-                    ->options(fn() => Pessoa::pluck('nome', 'id'))
-                    ->searchable(),
+                Tables\Filters\SelectFilter::make('user_id')
+                    ->label('Voluntário')
+                    ->relationship('voluntario', 'name')
+                    ->visible(fn() => Auth::user()->hasRole('editor') || Auth::user()->hasRole('super_admin')),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
-                    ->visible(fn($record) => $record->user_id === Auth::id()),
+                    ->visible(fn($record) => $record->user_id === Auth::id() || Auth::user()->hasRole('super_admin')),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn($record) => $record->user_id === Auth::id()),
+                    ->visible(fn($record) => $record->user_id === Auth::id() || Auth::user()->hasRole('super_admin')),
             ])
             ->bulkActions([]);
     }
@@ -127,9 +150,7 @@ class AtendimentoResource extends Resource
         $query = parent::getEloquentQuery();
 
         if (Auth::user()->hasRole('author')) {
-            return $query->whereHas('pessoa', fn($q) =>
-                $q->where('user_id', Auth::id())
-            );
+            return $query->where('user_id', Auth::id());
         }
 
         return $query;

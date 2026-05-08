@@ -1,30 +1,47 @@
-<div class="border-t border-gray-100 p-4">
-    {{-- Título --}}
-    <p class="text-xs font-semibold text-indigo-500 uppercase tracking-wide mb-2">
-        {{ $atendimento->titulo }}
-    </p>
+<div class="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
+    {{-- Cabeçalho do Assistido --}}
+    <div class="flex items-center gap-3 p-4 border-b border-gray-100">
+        <img
+            src="{{ $atendimento->foto ? Storage::url($atendimento->foto) : 'https://ui-avatars.com/api/?name='.urlencode($atendimento->nome_assistido) }}"
+            class="w-12 h-12 rounded-full object-cover"
+            alt="{{ $atendimento->nome_assistido }}"
+        />
+        <div class="flex-1">
+            <p class="font-semibold text-gray-800">{{ $atendimento->nome_assistido }}</p>
+            <p class="text-xs text-gray-400">
+                {{ $atendimento->endereco }}, {{ $atendimento->bairro }} — {{ $atendimento->cidade }}
+            </p>
+            <p class="text-xs text-gray-400">📞 {{ $atendimento->contato }}</p>
+        </div>
+        <div class="text-right">
+            <p class="text-xs text-gray-400">{{ $atendimento->titulo }}</p>
+            <p class="text-xs text-gray-300">por {{ $atendimento->voluntario->name }}</p>
+            @if($atendimento->voluntario->cargo)
+                <p class="text-xs text-indigo-400">{{ $atendimento->voluntario->cargo }}</p>
+            @endif
+        </div>
+    </div>
 
     {{-- Descrição --}}
-    <p class="text-gray-700 text-sm mb-3">{{ $atendimento->descricao }}</p>
+    <div class="p-4">
+        <p class="text-gray-700 text-sm">{{ $atendimento->descricao }}</p>
+    </div>
 
-    {{-- Imagem --}}
+    {{-- Imagem do atendimento --}}
     @if($atendimento->imagem)
         <img
             src="{{ Storage::url($atendimento->imagem) }}"
-            class="w-full rounded-lg mb-3 object-cover max-h-64"
+            class="w-full object-cover max-h-72"
             alt="Imagem do atendimento"
         />
     @endif
 
     {{-- Ações --}}
-    <div class="flex items-center gap-4 text-sm text-gray-500">
-        {{-- Curtir --}}
+    <div class="flex items-center gap-4 px-4 py-3 text-sm text-gray-500 border-t border-gray-100">
         <button wire:click="curtir" class="flex items-center gap-1 hover:text-red-500 transition-colors {{ $jaCourtiu ? 'text-red-500' : '' }}">
-            {{ $jaCourtiu ? '❤️' : '🤍' }}
-            <span>{{ $atendimento->curtidas_count }}</span>
+            {{ $jaCourtiu ? '❤️' : '🤍' }} <span>{{ $atendimento->curtidas_count }}</span>
         </button>
 
-        {{-- Comentários --}}
         <button wire:click="toggleComentarios" class="flex items-center gap-1 hover:text-indigo-500 transition-colors">
             💬 <span>{{ $atendimento->comentarios_count }}</span>
         </button>
@@ -34,9 +51,9 @@
         </span>
     </div>
 
-    {{-- Seção de comentários --}}
+    {{-- Comentários --}}
     @if($mostrarComentarios)
-        <div class="mt-3 space-y-2">
+        <div class="px-4 pb-4 space-y-2 border-t border-gray-50 pt-3">
             @foreach($comentarios as $comentario)
                 <div class="flex gap-2">
                     <img
@@ -50,7 +67,6 @@
                 </div>
             @endforeach
 
-            {{-- Campo novo comentário --}}
             <div class="flex gap-2 mt-2">
                 <input
                     wire:model="novoComentario"

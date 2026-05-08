@@ -19,11 +19,6 @@ class CardAtendimento extends Component
     {
         $user = Auth::user();
 
-        // Verifica permissão
-        if (!$user->hasRole('editor') && $atendimento->pessoa->user_id !== $user->id) {
-            return;
-        }
-
         $curtida = Curtida::where('user_id', $user->id)
             ->where('atendimento_id', $this->atendimento->id)
             ->first();
@@ -48,7 +43,7 @@ class CardAtendimento extends Component
 
         $user = Auth::user();
 
-        $comentario = Comentario::create([
+        Comentario::create([
             'user_id'        => $user->id,
             'atendimento_id' => $this->atendimento->id,
             'comentario'     => $this->novoComentario,
@@ -58,16 +53,16 @@ class CardAtendimento extends Component
 
         // Notifica o voluntário dono se for coordenador comentando
         if ($user->hasRole('editor') || $user->hasRole('super_admin')) {
-            $donoPessoa = $this->atendimento->pessoa->user_id;
-            if ($donoPessoa !== $user->id) {
+            $donoVoluntario = $this->atendimento->user_id;
+            if ($donoVoluntario !== $user->id) {
                 Notificacao::create([
-                    'user_id'        => $donoPessoa,
+                    'user_id'        => $donoVoluntario,
                     'atendimento_id' => $this->atendimento->id,
                     'type'           => 'comentario',
                     'data'           => json_encode([
                         'autor'      => $user->label_comentario,
                         'comentario' => substr($this->novoComentario, 0, 80),
-                        'pessoa'     => $this->atendimento->pessoa->nome,
+                        'pessoa'     => $this->atendimento->nome_assistido,
                     ]),
                 ]);
             }

@@ -36,5 +36,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Curtida::class, CurtidaPolicy::class);
         
          Atendimento::observe(AtendimentoObserver::class);
+         
     }
 }

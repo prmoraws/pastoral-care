@@ -10,10 +10,15 @@ class Atendimento extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pessoa_id',
         'user_id',
-        'descricao',
+        'nome_assistido',
+        'contato',
+        'endereco',
+        'bairro',
+        'cidade',
+        'foto',
         'imagem',
+        'descricao',
         'data_atendimento',
         'ordem',
         'curtidas_count',
@@ -27,7 +32,7 @@ class Atendimento extends Model
         ];
     }
 
-    // Título automático: "Atendimento - 06/05/2026" ou "Atualização - 06/05/2026"
+    // Título automático
     public function getTituloAttribute(): string
     {
         $data = $this->data_atendimento->format('d/m/Y');
@@ -35,11 +40,6 @@ class Atendimento extends Model
         return $this->ordem === 1
             ? "Atendimento - {$data}"
             : "Atualização - {$data}";
-    }
-
-    public function pessoa()
-    {
-        return $this->belongsTo(Pessoa::class);
     }
 
     public function voluntario()
