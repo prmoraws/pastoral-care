@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Atendimento;
+use App\Models\Assistido;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AtendimentoPolicy
+class AssistidoPolicy
 {
     use HandlesAuthorization;
 
@@ -21,7 +21,7 @@ class AtendimentoPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Atendimento $atendimento): bool
+    public function view(User $user, Assistido $assistido): bool
     {
         return $user->can('view_atendimento');
     }
@@ -37,7 +37,7 @@ class AtendimentoPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Atendimento $atendimento): bool
+    public function update(User $user, Assistido $assistido): bool
     {
         return $user->can('update_atendimento');
     }
@@ -45,7 +45,7 @@ class AtendimentoPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Atendimento $atendimento): bool
+    public function delete(User $user, Assistido $assistido): bool
     {
         return $user->can('delete_atendimento');
     }
@@ -61,7 +61,7 @@ class AtendimentoPolicy
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Atendimento $atendimento): bool
+    public function forceDelete(User $user, Assistido $assistido): bool
     {
         return $user->can('force_delete_atendimento');
     }
@@ -77,7 +77,7 @@ class AtendimentoPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Atendimento $atendimento): bool
+    public function restore(User $user, Assistido $assistido): bool
     {
         return $user->can('restore_atendimento');
     }
@@ -93,7 +93,7 @@ class AtendimentoPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Atendimento $atendimento): bool
+    public function replicate(User $user, Assistido $assistido): bool
     {
         return $user->can('replicate_atendimento');
     }

@@ -6,32 +6,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Pessoa extends Model
+class Voluntario extends Model
 {
     use HasFactory, SoftDeletes;
+
+    protected $table = 'voluntarios';
 
     protected $fillable = [
         'user_id',
         'nome',
+        'email',
+        'igreja',
+        'condicao',
         'foto',
         'endereco',
         'contato',
-        'observacoes',
         'atendimentos_count',
     ];
 
-    public function voluntario()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function atendimentos()
     {
-        return $this->hasMany(Atendimento::class);
-    }
-
-    public function ultimoAtendimento()
-    {
-        return $this->hasOne(Atendimento::class)->latestOfMany();
+        return $this->hasMany(Atendimento::class, 'user_id', 'user_id');
     }
 }

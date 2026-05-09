@@ -3,7 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AtendimentoResource\Pages;
-use App\Models\Atendimento;
+use App\Models\Assistido;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,12 +15,17 @@ use Illuminate\Support\Facades\Auth;
 
 class AtendimentoResource extends Resource
 {
-    protected static ?string $model = Atendimento::class;
+    protected static ?string $model = Assistido::class;
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationLabel = 'Atendimentos';
-    protected static ?string $modelLabel = 'Atendimento';
-    protected static ?string $pluralModelLabel = 'Atendimentos';
+    protected static ?string $navigationLabel = 'Assistidos';
+    protected static ?string $modelLabel = 'Assistido';
+    protected static ?string $pluralModelLabel = 'Assistidos';
     protected static ?int $navigationSort = 2;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return !auth()->user()->hasRole('author');
+    }
 
     public static function form(Form $form): Form
     {
@@ -95,7 +101,7 @@ class AtendimentoResource extends Resource
                 Tables\Columns\ImageColumn::make('foto')
                     ->label('Foto')
                     ->circular()
-                    ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->nome_assistido)),
+                    ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->nome_assistido)),
 
                 Tables\Columns\TextColumn::make('nome_assistido')
                     ->label('Assistido')

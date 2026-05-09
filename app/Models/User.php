@@ -8,6 +8,9 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use App\Models\PerfilCoordenador;
+use App\Models\PerfilVoluntario;
+use App\Models\Assistido;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -45,27 +48,37 @@ class User extends Authenticatable implements FilamentUser
     // Acesso ao painel Filament
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->ativo;
+        return $this->ativo && !$this->hasRole('author');
     }
 
     // Label do comentário: "Bispo: Fulano"
     public function getLabelComentarioAttribute(): string
     {
-        if ($this->cargo) {
-            return "{$this->cargo}: {$this->name}";
+        if ($this->hasRole('editor') && $this->perfilCoordenador?->cargo) {
+            return "{$this->perfilCoordenador->cargo}: {$this->name}";
         }
         return $this->name;
     }
 
     // Relacionamentos
-    public function pessoas()
+    public function perfilCoordenador()
     {
-        return $this->hasMany(Pessoa::class);
+        return $this->hasOne(PerfilCoordenador::class);
+    }
+
+    public function perfilVoluntario()
+    {
+        return $this->hasOne(PerfilVoluntario::class);
+    }
+
+    public function assistidos()
+    {
+        return $this->hasMany(Assistido::class);
     }
 
     public function atendimentos()
     {
-        return $this->hasMany(Atendimento::class);
+        return $this->hasMany(Assistido::class);
     }
 
     public function curtidas()

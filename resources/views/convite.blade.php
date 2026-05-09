@@ -4,16 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pastoral Care</title>
+    <title>Convite — Pastoral Care</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 
-<body class="bg-gray-50 min-h-screen">
-    @include('layouts.navigation')
-    <main class="max-w-lg mx-auto px-4 py-4">
-        {{ $slot }}
-    </main>
+<body>
+    @livewire('aceitar-convite', ['convite' => $convite])
     @livewireScripts
 </body>
 

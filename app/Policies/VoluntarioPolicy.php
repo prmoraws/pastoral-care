@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Atendimento;
+use App\Models\Voluntario;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class AtendimentoPolicy
+class VoluntarioPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class AtendimentoPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_atendimento');
+        return $user->can('view_any_voluntario');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Atendimento $atendimento): bool
+    public function view(User $user, Voluntario $voluntario): bool
     {
-        return $user->can('view_atendimento');
+        return $user->can('view_voluntario');
     }
 
     /**
@@ -31,23 +31,23 @@ class AtendimentoPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_atendimento');
+        return $user->can('create_voluntario');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Atendimento $atendimento): bool
+    public function update(User $user, Voluntario $voluntario): bool
     {
-        return $user->can('update_atendimento');
+        return $user->can('update_voluntario');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Atendimento $atendimento): bool
+    public function delete(User $user, Voluntario $voluntario): bool
     {
-        return $user->can('delete_atendimento');
+        return $user->can('delete_voluntario');
     }
 
     /**
@@ -55,15 +55,15 @@ class AtendimentoPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_atendimento');
+        return $user->can('delete_any_voluntario');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Atendimento $atendimento): bool
+    public function forceDelete(User $user, Voluntario $voluntario): bool
     {
-        return $user->can('force_delete_atendimento');
+        return $user->can('force_delete_voluntario');
     }
 
     /**
@@ -71,15 +71,15 @@ class AtendimentoPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_atendimento');
+        return $user->can('force_delete_any_voluntario');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Atendimento $atendimento): bool
+    public function restore(User $user, Voluntario $voluntario): bool
     {
-        return $user->can('restore_atendimento');
+        return $user->can('restore_voluntario');
     }
 
     /**
@@ -87,15 +87,15 @@ class AtendimentoPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_atendimento');
+        return $user->can('restore_any_voluntario');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Atendimento $atendimento): bool
+    public function replicate(User $user, Voluntario $voluntario): bool
     {
-        return $user->can('replicate_atendimento');
+        return $user->can('replicate_voluntario');
     }
 
     /**
@@ -103,6 +103,6 @@ class AtendimentoPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_atendimento');
+        return $user->can('reorder_voluntario');
     }
 }

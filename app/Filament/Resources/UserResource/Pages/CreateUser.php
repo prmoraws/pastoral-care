@@ -3,10 +3,15 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
-use Filament\Actions;
+use App\Models\AuditLog;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
+
+    protected function afterCreate(): void
+    {
+        AuditLog::registrar('criou', $this->record, [], $this->record->toArray());
+    }
 }

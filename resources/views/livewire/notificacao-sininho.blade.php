@@ -1,18 +1,19 @@
 <div class="relative">
     <button wire:click="toggleAberto" class="relative p-1 text-gray-500 hover:text-indigo-600 transition-colors">
         🔔
-        @if($naoLidas > 0)
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+        @if ($naoLidas > 0)
+            <span
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                 {{ $naoLidas }}
             </span>
         @endif
     </button>
 
-    @if($aberto)
+    @if ($aberto)
         <div class="absolute right-0 top-8 w-80 bg-white rounded-xl shadow-lg border border-gray-100 z-50">
             <div class="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                 <span class="font-semibold text-sm text-gray-700">Notificações</span>
-                @if($naoLidas > 0)
+                @if ($naoLidas > 0)
                     <button wire:click="marcarTodasLidas" class="text-xs text-indigo-500 hover:text-indigo-700">
                         Marcar todas como lidas
                     </button>
@@ -21,7 +22,7 @@
 
             <div class="max-h-80 overflow-y-auto divide-y divide-gray-50">
                 @forelse($notificacoes as $notificacao)
-                    @php $data = $notificacao->data @endphp
+                    @php $data = is_array($notificacao->data) ? $notificacao->data : json_decode($notificacao->data, true) @endphp
                     <div class="px-4 py-3 {{ $notificacao->read_at ? 'opacity-50' : 'bg-indigo-50' }}">
                         <p class="text-sm text-gray-700">
                             <span class="font-semibold">{{ $data['autor'] }}</span>

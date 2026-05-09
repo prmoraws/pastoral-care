@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Atendimento extends Model
+class Assistido extends Model
 {
     use HasFactory;
+
+    protected $table = 'assistidos';
 
     protected $fillable = [
         'user_id',
@@ -32,11 +34,9 @@ class Atendimento extends Model
         ];
     }
 
-    // Título automático
     public function getTituloAttribute(): string
     {
         $data = $this->data_atendimento->format('d/m/Y');
-
         return $this->ordem === 1
             ? "Atendimento - {$data}"
             : "Atualização - {$data}";
@@ -49,26 +49,21 @@ class Atendimento extends Model
 
     public function curtidas()
     {
-        return $this->hasMany(Curtida::class);
+        return $this->hasMany(Curtida::class, 'atendimento_id');
     }
 
     public function comentarios()
     {
-        return $this->hasMany(Comentario::class)->latest();
-    }
-
-    public function notificacoes()
-    {
-        return $this->hasMany(Notificacao::class);
-    }
-
-    public function curtidoPor(User $user): bool
-    {
-        return $this->curtidas()->where('user_id', $user->id)->exists();
+        return $this->hasMany(Comentario::class, 'atendimento_id')->latest();
     }
 
     public function atualizacoes()
     {
-        return $this->hasMany(Atualizacao::class)->latest();
+        return $this->hasMany(Atualizacao::class, 'atendimento_id')->latest();
+    }
+
+    public function notificacoes()
+    {
+        return $this->hasMany(Notificacao::class, 'atendimento_id');
     }
 }

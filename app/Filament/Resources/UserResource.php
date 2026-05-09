@@ -67,7 +67,7 @@ class UserResource extends Resource
                         ->options(
                             Role::whereIn('name', ['editor', 'author'])
                                 ->pluck('name', 'id')
-                                ->map(fn($name) => match($name) {
+                                ->map(fn($name) => match ($name) {
                                     'editor' => 'Coordenador',
                                     'author' => 'Voluntário',
                                     default  => $name,
@@ -78,7 +78,7 @@ class UserResource extends Resource
                         ->live(),
 
                     Forms\Components\Select::make('cargo')
-                        ->label('Cargo (Coordenador)')
+                        ->label('Cargo (apenas Coordenador)')
                         ->options([
                             'Bispo'   => 'Bispo',
                             'Pastor'  => 'Pastor',
@@ -86,17 +86,7 @@ class UserResource extends Resource
                             'Obreiro' => 'Obreiro',
                         ])
                         ->native(false)
-                        ->visible(fn(Forms\Get $get) => $get('roles') !== null),
-
-                    Forms\Components\Select::make('condicao')
-                        ->label('Condição (Voluntário)')
-                        ->options([
-                            'obreiro'     => 'Obreiro',
-                            'evangelista' => 'Evangelista',
-                            'membro'      => 'Membro',
-                        ])
-                        ->native(false)
-                        ->visible(fn(Forms\Get $get) => $get('roles') !== null),
+                        ->nullable(),
 
                     Forms\Components\Toggle::make('ativo')
                         ->label('Usuário Ativo')
@@ -112,7 +102,7 @@ class UserResource extends Resource
                 Tables\Columns\ImageColumn::make('avatar')
                     ->label('Foto')
                     ->circular()
-                    ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->name)),
+                    ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name)),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nome')
@@ -126,12 +116,12 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Papel')
                     ->badge()
-                    ->formatStateUsing(fn($state) => match($state) {
+                    ->formatStateUsing(fn($state) => match ($state) {
                         'editor' => 'Coordenador',
                         'author' => 'Voluntário',
                         default  => $state,
                     })
-                    ->color(fn($state) => match($state) {
+                    ->color(fn($state) => match ($state) {
                         'editor' => 'warning',
                         'author' => 'success',
                         default  => 'gray',
@@ -149,9 +139,9 @@ class UserResource extends Resource
                     ->label('Ativo')
                     ->boolean(),
 
-                Tables\Columns\TextColumn::make('pessoas_count')
-                    ->label('Pessoas')
-                    ->counts('pessoas')
+                Tables\Columns\TextColumn::make('atendimentos_count')
+                    ->label('Atendimentos')
+                    ->counts('atendimentos')
                     ->sortable(),
             ])
             ->filters([
@@ -195,5 +185,10 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->whereDoesntHave('roles', fn($q) => $q->where('name', 'super_admin'));
+    }
+    
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->hasRole('super_admin');
     }
 }

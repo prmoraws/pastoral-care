@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\PessoaResource\Pages;
+namespace App\Filament\Resources\AuditLogResource\Pages;
 
-use App\Filament\Resources\PessoaResource;
+use App\Filament\Resources\AuditLogResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListPessoas extends ListRecords
+class ListAuditLogs extends ListRecords
 {
-    protected static string $resource = PessoaResource::class;
+    protected static string $resource = AuditLogResource::class;
 
     protected function getHeaderActions(): array
     {

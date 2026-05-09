@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Atendimento;
+use App\Models\Assistido;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,6 +17,7 @@ class Feed extends Component
     public string $filtroData = '';
 
     protected $queryString = ['busca', 'filtroVoluntario', 'filtroData'];
+    protected $listeners = ['atendimento-criado' => '$refresh'];
 
     public function updatingBusca(): void
     {
@@ -27,8 +28,8 @@ class Feed extends Component
     {
         $user = Auth::user();
 
-        $atendimentos = Atendimento::query()
-            ->with(['voluntario', 'curtidas', 'comentarios.user'])
+        $assistidos = Assistido::query()
+            ->with(['voluntario.perfilVoluntario', 'curtidas', 'comentarios.user', 'atualizacoes'])
             ->when($user->hasRole('author'), fn($q) => $q->where('user_id', $user->id))
             ->when($this->busca, fn($q) => $q->where('nome_assistido', 'like', "%{$this->busca}%"))
             ->when($this->filtroVoluntario, fn($q) => $q->where('user_id', $this->filtroVoluntario))
@@ -36,9 +37,9 @@ class Feed extends Component
             ->latest()
             ->paginate(10);
 
-        $voluntarios = User::role('author')->where('ativo', true)->pluck('name', 'id');
+        $voluntarios = User::role('author')->pluck('name', 'id');
 
-        return view('livewire.feed', compact('atendimentos', 'voluntarios'))
+        return view('livewire.feed', compact('assistidos', 'voluntarios'))
             ->layout('layouts.app');
     }
 }
