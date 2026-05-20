@@ -4,12 +4,17 @@
     <div class="flex items-center justify-between px-3 py-2.5">
         <div class="flex items-center gap-2.5">
             <img src="{{ $atendimento->foto ? Storage::url($atendimento->foto) : 'https://ui-avatars.com/api/?name=' . urlencode($atendimento->nome_assistido) . '&size=40&background=efefef&color=333' }}"
-                class="w-10 h-10 rounded-full object-cover border border-gray-200" />
+                class="w-20 h-20 rounded-full object-cover border border-gray-200" />
             <div>
                 <p class="text-sm font-semibold text-gray-900 leading-tight">{{ $atendimento->nome_assistido }}</p>
                 <p class="text-xs text-gray-400 leading-tight"> {{ $atendimento->endereco }}</p>
                 <p class="text-xs text-gray-400 leading-tight">{{ $atendimento->bairro }}, {{ $atendimento->cidade }}</p>
-                <p class="text-xs text-gray-400 leading-tight">📞 {{ $atendimento->contato }} </p>
+                <p class="text-xs text-gray-400 leading-tight">Bloco: {{ $atendimento->bloco?->nome }}</p>
+                <p class="text-xs text-gray-400 leading-tight">Região: {{ $atendimento->regiao?->nome }}</p>
+                <p class="text-xs text-gray-400 leading-tight">Igreja: {{ $atendimento->igreja?->nome }}</p>
+                <p class="text-xs text-gray-400 leading-tight">Contato:
+                    {{ preg_replace('/(\d{2})(\d{1})(\d{4})(\d{4})/', '($1) $2 $3-$4', preg_replace('/\D/', '', $atendimento->contato)) }}
+                </p>
             </div>
         </div>
         <a href="{{ route('perfil', $atendimento->voluntario->id) }}" class="flex items-center gap-1.5 group">
@@ -17,7 +22,8 @@
                 <p class="text-xs font-semibold text-gray-700 group-hover:text-purple-600 leading-tight">
                     {{ $atendimento->voluntario->name }}</p>
                 @if ($atendimento->voluntario->condicao)
-                    <p class="text-xs text-gray-400 leading-tight">{{ ucfirst($atendimento->voluntario->condicao) }}</p>
+                    <p class="text-xs text-gray-400 leading-tight">{{ ucfirst($atendimento->voluntario->condicao) }}
+                    </p>
                 @endif
             </div>
             <img src="{{ $atendimento->voluntario->avatar ? Storage::url($atendimento->voluntario->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($atendimento->voluntario->name) . '&size=32&background=833ab4&color=fff' }}"

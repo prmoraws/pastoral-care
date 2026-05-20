@@ -49,6 +49,39 @@ class AtendimentoResource extends Resource
                         ->tel()
                         ->required()
                         ->maxLength(20),
+                    Forms\Components\Select::make('bloco_id')
+                        ->label('Bloco')
+                        ->options(\App\Models\Bloco::orderBy('nome')->pluck('nome', 'id'))
+                        ->native(false)
+                        ->searchable()
+                        ->live()
+                        ->afterStateUpdated(fn($set) => $set('regiao_id', null) & $set('igreja_id', null)),
+
+                    Forms\Components\Select::make('regiao_id')
+                        ->label('Região')
+                        ->options(
+                            fn(Forms\Get $get) =>
+                            $get('bloco_id')
+                                ? \App\Models\Regiao::where('bloco_id', $get('bloco_id'))->orderBy('nome')->pluck('nome', 'id')
+                                : []
+                        )
+                        ->native(false)
+                        ->searchable()
+                        ->live()
+                        ->disabled(fn(Forms\Get $get) => !$get('bloco_id'))
+                        ->afterStateUpdated(fn($set) => $set('igreja_id', null)),
+
+                    Forms\Components\Select::make('igreja_id')
+                        ->label('Igreja')
+                        ->options(
+                            fn(Forms\Get $get) =>
+                            $get('regiao_id')
+                                ? \App\Models\Igreja::where('regiao_id', $get('regiao_id'))->orderBy('nome')->pluck('nome', 'id')
+                                : []
+                        )
+                        ->native(false)
+                        ->searchable()
+                        ->disabled(fn(Forms\Get $get) => !$get('regiao_id')),
 
                     Forms\Components\TextInput::make('endereco')
                         ->label('Endereço')
@@ -107,6 +140,21 @@ class AtendimentoResource extends Resource
                     ->label('Assistido')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('bloco.nome')
+                    ->label('Bloco')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('regiao.nome')
+                    ->label('Região')
+                    ->searchable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('igreja.nome')
+                    ->label('Igreja')
+                    ->searchable()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('cidade')
                     ->label('Cidade')

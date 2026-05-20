@@ -18,6 +18,9 @@ class Assistido extends Model
         'endereco',
         'bairro',
         'cidade',
+        'bloco_id',
+        'regiao_id',
+        'igreja_id',
         'foto',
         'imagem',
         'descricao',
@@ -65,5 +68,19 @@ class Assistido extends Model
     public function notificacoes()
     {
         return $this->hasMany(Notificacao::class, 'atendimento_id');
+    }
+    public function bloco()
+    {
+        return $this->belongsTo(Bloco::class);
+    }
+
+    public function regiao()
+    {
+        return $this->belongsTo(Regiao::class);
+    }
+
+    public function igreja()
+    {
+        return $this->belongsTo(Igreja::class);
     }
 }

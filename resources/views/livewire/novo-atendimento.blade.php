@@ -64,6 +64,45 @@
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+                    {{-- Bloco --}}
+                    <div>
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Bloco</label>
+                        <select wire:model.live="bloco_id"
+                            class="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400">
+                            <option value="">Selecione o Bloco...</option>
+                            @foreach (\App\Models\Bloco::orderBy('nome')->get() as $bloco)
+                                <option value="{{ $bloco->id }}">{{ $bloco->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Região --}}
+                    <div>
+                        <label
+                            class="text-xs font-semibold text-gray-500 uppercase tracking-wide {{ !$bloco_id ? 'opacity-40' : '' }}">Região</label>
+                        <select wire:model.live="regiao_id" {{ !$bloco_id ? 'disabled' : '' }}
+                            class="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400 {{ !$bloco_id ? 'opacity-40 cursor-not-allowed' : '' }}">
+                            <option value="">
+                                {{ $bloco_id ? 'Selecione a Região...' : 'Selecione um Bloco primeiro' }}</option>
+                            @foreach ($this->regioes as $regiao)
+                                <option value="{{ $regiao->id }}">{{ $regiao->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Igreja --}}
+                    <div>
+                        <label
+                            class="text-xs font-semibold text-gray-500 uppercase tracking-wide {{ !$regiao_id ? 'opacity-40' : '' }}">Igreja</label>
+                        <select wire:model.live="igreja_id" {{ !$regiao_id ? 'disabled' : '' }}
+                            class="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400 {{ !$regiao_id ? 'opacity-40 cursor-not-allowed' : '' }}">
+                            <option value="">
+                                {{ $regiao_id ? 'Selecione a Igreja...' : 'Selecione uma Região primeiro' }}</option>
+                            @foreach ($this->igrejas as $igreja)
+                                <option value="{{ $igreja->id }}">{{ $igreja->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     {{-- Endereço --}}
                     <div>
