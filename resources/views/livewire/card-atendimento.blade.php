@@ -26,7 +26,7 @@
                     </p>
                 @endif
             </div>
-            <img src="{{ $atendimento->voluntario->avatar ? Storage::url($atendimento->voluntario->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($atendimento->voluntario->name) . '&size=32&background=833ab4&color=fff' }}"
+            <img src="{{ $atendimento->voluntario?->avatar ? Storage::url($atendimento->voluntario->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($atendimento->voluntario?->name ?? 'Removido') . '&size=32&background=833ab4&color=fff' }}"
                 class="w-8 h-8 rounded-full object-cover border-2 border-transparent group-hover:border-purple-400 transition-colors" />
         </a>
     </div>
@@ -112,7 +112,7 @@
         <div class="px-3 py-2 space-y-2">
             @foreach ($comentarios as $comentario)
                 <div class="flex gap-2">
-                    <img src="{{ $comentario->user->avatar ? Storage::url($comentario->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($comentario->user->name) . '&size=28&background=833ab4&color=fff' }}"
+                    <img src="{{ auth()->user()->avatar ? Storage::url(auth()->user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&size=28&background=833ab4&color=fff' }}"
                         class="w-7 h-7 rounded-full object-cover flex-shrink-0" />
                     <div class="flex-1">
                         @if ($editandoComentarioId === $comentario->id)

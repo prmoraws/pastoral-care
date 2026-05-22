@@ -29,12 +29,17 @@ class Notificacao extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withDefault([
+            'name'   => 'Usuário removido',
+            'avatar' => null,
+        ]);
     }
 
     public function atendimento()
     {
-        return $this->belongsTo(Atendimento::class);
+        return $this->belongsTo(Assistido::class, 'atendimento_id')->withDefault([
+            'nome_assistido' => 'Registro removido',
+        ]);
     }
 
     public function marcarComoLida(): void

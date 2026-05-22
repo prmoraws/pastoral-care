@@ -4,7 +4,7 @@
         @if ($naoLidas > 0)
             <span
                 class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                {{ $naoLidas }}
+                {{ $naoLidas > 9 ? '9+' : $naoLidas }}
             </span>
         @endif
     </button>
@@ -15,7 +15,7 @@
                 <span class="font-semibold text-sm text-gray-700">Notificações</span>
                 @if ($naoLidas > 0)
                     <button wire:click="marcarTodasLidas" class="text-xs text-indigo-500 hover:text-indigo-700">
-                        Marcar todas como lidas
+                        ✓ Marcar como lidas
                     </button>
                 @endif
             </div>

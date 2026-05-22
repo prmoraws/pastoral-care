@@ -63,7 +63,7 @@
         <div class="mt-2 space-y-2 border-t border-gray-100 pt-2">
             @foreach ($comentarios as $comentario)
                 <div class="flex gap-2">
-                    <img src="{{ $comentario->user->avatar ? Storage::url($comentario->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($comentario->user->name) . '&size=24&background=833ab4&color=fff' }}"
+                    <img src="{{ $comentario->user?->avatar ? Storage::url($comentario->user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($comentario->user?->name ?? 'Removido') . '&size=24&background=833ab4&color=fff' }}"
                         class="w-6 h-6 rounded-full object-cover flex-shrink-0" />
                     <div class="flex-1">
                         @if ($editandoComentarioId === $comentario->id)

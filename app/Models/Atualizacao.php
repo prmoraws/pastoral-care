@@ -25,7 +25,10 @@ class Atualizacao extends Model
 
     public function voluntario()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->withDefault([
+            'name'   => 'Usuário removido',
+            'avatar' => null,
+        ]);
     }
 
     public function curtidas()

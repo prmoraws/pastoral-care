@@ -20,11 +20,17 @@ class NotificacaoSininho extends Component
         Notificacao::where('user_id', Auth::id())
             ->whereNull('read_at')
             ->update(['read_at' => now()]);
+
+        $this->aberto = false;
     }
 
     public function render()
     {
         $notificacoes = Notificacao::where('user_id', Auth::id())
+            ->where(function ($q) {
+                $q->whereNull('read_at')
+                    ->orWhere('read_at', '>=', now()->subDay());
+            })
             ->latest('created_at')
             ->limit(10)
             ->get();
